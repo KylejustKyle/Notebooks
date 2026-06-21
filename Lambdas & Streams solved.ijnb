@@ -1,0 +1,782 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 5,
+  "metadata": {
+    "language_info": {
+      "name": "java"
+    }
+  },
+  "cells": [
+    {
+      "id": "md-part1",
+      "cell_type": "markdown",
+      "source": "---\n## Warm-Up\n\nThese cells test your understanding of lambda syntax and functional interfaces **without requiring you to write much code**.\nRead carefully, predict the output, then run to check.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-part1"
+      }
+    },
+    {
+      "id": "md-1a",
+      "cell_type": "markdown",
+      "source": "### Exercise 1a — Fix the broken lambdas\n\nEach cell below contains one broken lambda. Fix the syntax error and run the cell to confirm it passes.\nEvery case demonstrates a different rule — read the comment before editing.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-1a"
+      }
+    },
+    {
+      "id": "md-1a-i",
+      "cell_type": "markdown",
+      "source": "**1a-i** — Explicit type on a single parameter requires parentheses around the parameter list.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-1a-i"
+      }
+    },
+    {
+      "id": "code-1a-i",
+      "cell_type": "code",
+      "source": "import java.util.function.*;\n\nFunction<String, Integer> lenOf = s -> s.length();\n\n// --- do not edit below ---\nassert lenOf.apply(\"hello\") == 5 : \"lenOf(hello) should be 5\";\nSystem.out.println(\"1a-i passed!\");",
+      "metadata": {
+        "language": "java",
+        "id": "code-1a-i",
+        "executionSummary": {
+          "executionOrder": 2,
+          "success": true
+        }
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "1a-i passed!\r\n"
+          },
+          "metadata": {},
+          "execution_count": 2
+        }
+      ]
+    },
+    {
+      "id": "md-1a-ii",
+      "cell_type": "markdown",
+      "source": "**1a-ii** — Two parameters always require parentheses around the parameter list, even when types are omitted.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-1a-ii"
+      }
+    },
+    {
+      "id": "code-1a-ii",
+      "cell_type": "code",
+      "source": "import java.util.function.*;\n\nBiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;\n\n// --- do not edit below ---\nassert add.apply(3, 4) == 7 : \"add(3, 4) should be 7\";\nSystem.out.println(\"1a-ii passed!\");",
+      "metadata": {
+        "language": "java",
+        "id": "code-1a-ii",
+        "executionSummary": {
+          "executionOrder": 3,
+          "success": true
+        }
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "1a-ii passed!\r\n"
+          },
+          "metadata": {},
+          "execution_count": 3
+        }
+      ]
+    },
+    {
+      "id": "md-1a-iii",
+      "cell_type": "markdown",
+      "source": "**1a-iii** — You cannot mix typed and untyped parameters. Either all parameters have explicit types, or none do.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-1a-iii"
+      }
+    },
+    {
+      "id": "code-1a-iii",
+      "cell_type": "code",
+      "source": "import java.util.function.*;\n\nBiFunction<String, Integer, String> repeat = (s, n) -> s.repeat(n);\n\n// --- do not edit below ---\nassert repeat.apply(\"ab\", 3).equals(\"ababab\") : \"repeat(ab, 3) should be ababab\";\nSystem.out.println(\"1a-iii passed!\");",
+      "metadata": {
+        "language": "java",
+        "id": "code-1a-iii",
+        "executionSummary": {
+          "executionOrder": 4,
+          "success": true
+        }
+      },
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "1a-iii passed!\r\n"
+          },
+          "metadata": {},
+          "execution_count": 4
+        }
+      ]
+    },
+    {
+      "id": "md-1a-iv",
+      "cell_type": "markdown",
+      "source": "**1a-iv** — A block body (with curly braces) requires an explicit `return` statement when the functional interface's method returns a value.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-1a-iv"
+      }
+    },
+    {
+      "id": "code-1a-iv",
+      "cell_type": "code",
+      "source": "import java.util.function.*;\n\nFunction<Integer, Integer> triple = x -> { return x * 3; };\n\n// --- do not edit below ---\nassert triple.apply(7) == 21 : \"triple(7) should be 21\";\nSystem.out.println(\"1a-iv passed!\");",
+      "metadata": {
+        "language": "java",
+        "id": "code-1a-iv",
+        "executionSummary": {
+          "executionOrder": 5,
+          "success": true
+        }
+      },
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "1a-iv passed!\r\n"
+          },
+          "metadata": {},
+          "execution_count": 5
+        }
+      ]
+    },
+    {
+      "id": "md-1a-v",
+      "cell_type": "markdown",
+      "source": "**1a-v** — A block body requires a semicolon after the last statement before the closing brace.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-1a-v"
+      }
+    },
+    {
+      "id": "code-1a-v",
+      "cell_type": "code",
+      "source": "import java.util.function.*;\n\nPredicate<String> isEmpty = s -> { return s.isEmpty(); };\n\n// --- do not edit below ---\nassert isEmpty.test(\"\")    : \"isEmpty(\\\"\\\") should be true\";\nassert !isEmpty.test(\"hi\") : \"isEmpty(hi) should be false\";\nSystem.out.println(\"1a-v passed!\");",
+      "metadata": {
+        "language": "java",
+        "id": "code-1a-v",
+        "executionSummary": {
+          "executionOrder": 6,
+          "success": true
+        }
+      },
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "1a-v passed!\r\n"
+          },
+          "metadata": {},
+          "execution_count": 6
+        }
+      ]
+    },
+    {
+      "id": "md-1a-vi",
+      "cell_type": "markdown",
+      "source": "**1a-vi** — The lambda body must match the return type of the functional interface. `Consumer<T>`'s `accept` method returns `void`, so the body should *do something* with the value rather than return it. This lambda is called `printer` — what might a printer do with a String?",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-1a-vi"
+      }
+    },
+    {
+      "id": "code-1a-vi",
+      "cell_type": "code",
+      "source": "import java.util.function.*;\n\nConsumer<String> printer = s -> { System.out.println(s); };\n// --- do not edit below ---\nprinter.accept(\"test\");  // should run without throwing\nSystem.out.println(\"1a-vi passed!\");",
+      "metadata": {
+        "language": "java",
+        "id": "code-1a-vi",
+        "executionSummary": {
+          "executionOrder": 7,
+          "success": true
+        }
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "test\r\n1a-vi passed!\r\n"
+          },
+          "metadata": {},
+          "execution_count": 7
+        }
+      ]
+    },
+    {
+      "id": "md-1b",
+      "cell_type": "markdown",
+      "source": "### Exercise 1b — Choosing the right functional interface\n\nMatch each lambda to a predefined functional interface from `java.util.function`.\n\n**Task:** Replace each `???` with the correct interface type (`Supplier`, `Consumer`, `Predicate`, `Function`, `BiFunction`, or `BiConsumer`).\n\nYou do **not** need to change the lambda expressions themselves.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-1b"
+      }
+    },
+    {
+      "id": "code-1b",
+      "cell_type": "code",
+      "source": "import java.util.function.*;\n\n// Takes a String, returns its uppercased version\nFunction <String, String> toUpper = s -> s.toUpperCase();\n\n// Takes an Integer, returns true if it is even\nPredicate <Integer> isEven = n -> n % 2 == 0;\n\n// Takes no argument, returns the string \"hello\"\nSupplier <String> greeter = () -> \"hello\";\n\n// Takes a String, prints it, returns nothing\nConsumer <String> printer = s -> System.out.println(\">> \" + s);\n\n// Takes two Integers, returns their product\nBiFunction <Integer, Integer, Integer> multiply = (a, b) -> a * b;\n\n// --- do not edit below this line ---\nassert toUpper.apply(\"java\").equals(\"JAVA\")  : \"toUpper failed\";\nassert isEven.test(4)                        : \"isEven(4) should be true\";\nassert !isEven.test(7)                       : \"isEven(7) should be false\";\nassert greeter.get().equals(\"hello\")         : \"greeter failed\";\nprinter.accept(\"test\");\nassert multiply.apply(3, 4) == 12            : \"multiply(3,4) should be 12\";\nSystem.out.println(\"1b passed!\");",
+      "metadata": {
+        "language": "java",
+        "id": "code-1b",
+        "executionSummary": {
+          "executionOrder": 10,
+          "success": true
+        }
+      },
+      "execution_count": 10,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": ">> test\r\n1b passed!\r\n"
+          },
+          "metadata": {},
+          "execution_count": 10
+        }
+      ]
+    },
+    {
+      "id": "md-1c",
+      "cell_type": "markdown",
+      "source": "### Exercise 1c — Predict the output\n\n**Before running** this cell, read the stream pipeline carefully and write down what you expect `result` to be.\n\nThen run the cell. Were you right?\n\nThink about: what does each intermediate operation do to the stream? In what order does the `filter` remove elements?",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-1c"
+      }
+    },
+    {
+      "id": "code-1c",
+      "cell_type": "code",
+      "source": "import java.util.*;\nimport java.util.stream.*;\n\nList<String> words = List.of(\"banana\", \"apple\", \"cherry\", \"apricot\", \"blueberry\");\n\nlong result = words.stream()\n    .filter(w -> w.startsWith(\"a\"))\n    .count();\n\n// Write your prediction as a comment here before running:\n// My prediction: result = 2\n\nSystem.out.println(\"result = \" + result);",
+      "metadata": {
+        "language": "java",
+        "id": "code-1c",
+        "executionSummary": {
+          "executionOrder": 2,
+          "success": true
+        }
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "result = 2\r\n"
+          },
+          "metadata": {},
+          "execution_count": 2
+        }
+      ]
+    },
+    {
+      "id": "md-1d",
+      "cell_type": "markdown",
+      "source": "### Exercise 1d — Effectively final\n\nThe method below does **not** compile.\n\n**Task:** Read the error, understand why the lambda capture is invalid, and fix it with the smallest possible change — without removing the lambda or the assertion.\n\nHint: what does the lecture say about local variables used inside a lambda body? Does `limit` qualify?",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-1d"
+      }
+    },
+    {
+      "id": "code-1d",
+      "cell_type": "code",
+      "source": "import java.util.function.*;\nimport java.util.*;\nimport java.util.stream.*;\n\n// Do not move code outside this method.\nList<Integer> filterAbove(List<Integer> values) {\n    int limit = 10;\n    //limit = 10;  // this reassignment makes `limit` non-final\n    Predicate<Integer> bigEnough = n -> n > limit;\n    return values.stream().filter(bigEnough).collect(Collectors.toList());\n}\n\n// --- do not edit below ---\nvar result = filterAbove(List.of(3, 7, 12, 9, 2, 11));\nassert result.equals(List.of(12, 11)) : \"Expected [12, 11] but got \" + result;\nSystem.out.println(\"1d passed! result = \" + result);",
+      "metadata": {
+        "language": "java",
+        "id": "code-1d",
+        "executionSummary": {
+          "executionOrder": 3,
+          "success": true
+        }
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "1d passed! result = [12, 11]\r\n"
+          },
+          "metadata": {},
+          "execution_count": 3
+        }
+      ]
+    },
+    {
+      "id": "md-part2",
+      "cell_type": "markdown",
+      "source": "---\n## Part 2 — Fill In One Line\n\nEach exercise has a pipeline with **one step missing**. Replace the placeholder (e.g. `REPLACE_THIS_WITH_YOUR_LAMBDA`) with your code to make the assertions pass.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-part2"
+      }
+    },
+    {
+      "id": "md-2a",
+      "cell_type": "markdown",
+      "source": "### Exercise 2a — `filter`\n\nKeep only the numbers greater than 10 from the list.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-2a"
+      }
+    },
+    {
+      "id": "code-2a",
+      "cell_type": "code",
+      "source": "import java.util.*;\nimport java.util.stream.*;\n\nList<Integer> numbers = List.of(3, 15, 7, 22, 10, 11);\n\nList<Integer> result = numbers.stream()\n    .filter(x -> x > 10)\n    .collect(Collectors.toList());\n\n// --- do not edit below ---\nassert result.equals(List.of(15, 22, 11)) : \"Expected [15, 22, 11] but got \" + result;\nSystem.out.println(\"2a passed! result = \" + result);",
+      "metadata": {
+        "language": "java",
+        "id": "code-2a",
+        "executionSummary": {
+          "executionOrder": 4,
+          "success": true
+        }
+      },
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "2a passed! result = [15, 22, 11]\r\n"
+          },
+          "metadata": {},
+          "execution_count": 4
+        }
+      ]
+    },
+    {
+      "id": "md-2b",
+      "cell_type": "markdown",
+      "source": "### Exercise 2b — `map`\n\nConvert each string in the list to its length (as an `Integer`).",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-2b"
+      }
+    },
+    {
+      "id": "code-2b",
+      "cell_type": "code",
+      "source": "import java.util.*;\nimport java.util.stream.*;\n\nList<String> words = List.of(\"cat\", \"elephant\", \"ox\", \"giraffe\");\n\nList<Integer> lengths = words.stream()\n    .map(x -> x.length())\n    .collect(Collectors.toList());\n\n// --- do not edit below ---\nassert lengths.equals(List.of(3, 8, 2, 7)) : \"Expected [3, 8, 2, 7] but got \" + lengths;\nSystem.out.println(\"2b passed! lengths = \" + lengths);",
+      "metadata": {
+        "language": "java",
+        "id": "code-2b",
+        "executionSummary": {
+          "executionOrder": 6,
+          "success": true
+        }
+      },
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "2b passed! lengths = [3, 8, 2, 7]\r\n"
+          },
+          "metadata": {},
+          "execution_count": 6
+        }
+      ]
+    },
+    {
+      "id": "md-2c",
+      "cell_type": "markdown",
+      "source": "### Exercise 2c — `sorted`\n\nThe pipeline collects words, but they should come out **sorted alphabetically**.\nAdd one intermediate operation to sort them.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-2c"
+      }
+    },
+    {
+      "id": "code-2c",
+      "cell_type": "code",
+      "source": "import java.util.*;\nimport java.util.stream.*;\n\nList<String> words = List.of(\"mango\", \"apple\", \"fig\", \"cherry\");\n\nList<String> sorted = words.stream()\n    .sorted()\n    .collect(Collectors.toList());\n\n// --- do not edit below ---\nassert sorted.equals(List.of(\"apple\", \"cherry\", \"fig\", \"mango\"))\n    : \"Expected alphabetical order but got \" + sorted;\nSystem.out.println(\"2c passed! sorted = \" + sorted);",
+      "metadata": {
+        "language": "java",
+        "id": "code-2c",
+        "executionSummary": {
+          "executionOrder": 7,
+          "success": true
+        }
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "2c passed! sorted = [apple, cherry, fig, mango]\r\n"
+          },
+          "metadata": {},
+          "execution_count": 7
+        }
+      ]
+    },
+    {
+      "id": "md-2d",
+      "cell_type": "markdown",
+      "source": "### Exercise 2d — `reduce`\n\nSum all the integers in the list using `reduce`. The identity value (starting value) is `0`.\n\nHint: `Integer::sum` is a method reference with a compatible signature.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-2d"
+      }
+    },
+    {
+      "id": "code-2d",
+      "cell_type": "code",
+      "source": "import java.util.*;\n\nList<Integer> nums = List.of(4, 7, 2, 9, 1);\n\nint total = nums.stream()\n    .reduce(0, Integer::sum);\n\n// --- do not edit below ---\nassert total == 23 : \"Expected 23 but got \" + total;\nSystem.out.println(\"2d passed! total = \" + total);",
+      "metadata": {
+        "language": "java",
+        "id": "code-2d",
+        "executionSummary": {
+          "executionOrder": 9,
+          "success": true
+        }
+      },
+      "execution_count": 9,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "2d passed! total = 23\r\n"
+          },
+          "metadata": {},
+          "execution_count": 9
+        }
+      ]
+    },
+    {
+      "id": "md-2e",
+      "cell_type": "markdown",
+      "source": "### Exercise 2e — Method reference\n\nThe pipeline currently uses a lambda `s -> s.toUpperCase()`. \nReplace it with an equivalent **method reference**.\n\nThe output should be identical.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-2e"
+      }
+    },
+    {
+      "id": "code-2e",
+      "cell_type": "code",
+      "source": "import java.util.*;\nimport java.util.stream.*;\n\nList<String> words = List.of(\"hello\", \"world\", \"java\");\n\nList<String> upper = words.stream()\n    .map(String::toUpperCase)  // replace this lambda with a method reference\n    .collect(Collectors.toList());\n\n// --- do not edit below ---\nassert upper.equals(List.of(\"HELLO\", \"WORLD\", \"JAVA\")) : \"Got \" + upper;\nSystem.out.println(\"2e passed! upper = \" + upper);",
+      "metadata": {
+        "language": "java",
+        "id": "code-2e",
+        "executionSummary": {
+          "executionOrder": 10,
+          "success": true
+        }
+      },
+      "execution_count": 10,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "2e passed! upper = [HELLO, WORLD, JAVA]\r\n"
+          },
+          "metadata": {},
+          "execution_count": 10
+        }
+      ]
+    },
+    {
+      "id": "md-2f",
+      "cell_type": "markdown",
+      "source": "### Exercise 2f — `distinct` + `sorted`\n\nThe list contains duplicates. Produce a list of **unique** values in **ascending order**.\n\nAdd the two missing intermediate operations (in the right order!).",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-2f"
+      }
+    },
+    {
+      "id": "code-2f",
+      "cell_type": "code",
+      "source": "import java.util.*;\nimport java.util.stream.*;\n\nList<Integer> nums = List.of(5, 3, 5, 1, 3, 2, 1, 4);\n\nList<Integer> result = nums.stream()\n    .distinct()\n    .sorted()\n    .collect(Collectors.toList());\n\n// --- do not edit below ---\nassert result.equals(List.of(1, 2, 3, 4, 5)) : \"Expected [1,2,3,4,5] but got \" + result;\nSystem.out.println(\"2f passed! result = \" + result);",
+      "metadata": {
+        "language": "java",
+        "id": "code-2f",
+        "executionSummary": {
+          "executionOrder": 11,
+          "success": true
+        }
+      },
+      "execution_count": 11,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "2f passed! result = [1, 2, 3, 4, 5]\r\n"
+          },
+          "metadata": {},
+          "execution_count": 11
+        }
+      ]
+    },
+    {
+      "id": "md-2g",
+      "cell_type": "markdown",
+      "source": "### Exercise 2g — Custom `Comparator` with a lambda\n\nSort the list of words **by length** (shortest first) using `Collections.sort` and a lambda comparator.\n\nFill in the lambda where indicated.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-2g"
+      }
+    },
+    {
+      "id": "code-2g",
+      "cell_type": "code",
+      "source": "import java.util.*;\n\nList<String> words = new ArrayList<>(List.of(\"banana\", \"fig\", \"kiwi\", \"plum\", \"strawberry\"));\n\nCollections.sort(words, (a, b) -> Integer.compare(a.length(), b.length()));\n\n// --- do not edit below ---\n// just check first and last; middle may vary for equal-length words\nassert words.get(0).equals(\"fig\")        : \"Shortest word should be first, got \" + words.get(0);\nassert words.get(4).equals(\"strawberry\") : \"Longest word should be last, got \" + words.get(4);\nSystem.out.println(\"2g passed! words = \" + words);",
+      "metadata": {
+        "language": "java",
+        "id": "code-2g",
+        "executionSummary": {
+          "executionOrder": 13,
+          "success": true
+        }
+      },
+      "execution_count": 13,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "2g passed! words = [fig, kiwi, plum, banana, strawberry]\r\n"
+          },
+          "metadata": {},
+          "execution_count": 13
+        }
+      ]
+    },
+    {
+      "id": "md-part3",
+      "cell_type": "markdown",
+      "source": "---\n## Part 3 — Build a Full Pipeline\n\nNow you write the entire stream expression. The setup code and assertions are provided; everything in between is up to you.\n\nThink about which operations you need, and in what order.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-part3"
+      }
+    },
+    {
+      "id": "md-3a",
+      "cell_type": "markdown",
+      "source": "### Exercise 3a — Filter, map, collect\n\nGiven a list of integers, produce a list containing **only the even numbers, each multiplied by 3**.\n\nExample: `[1, 2, 3, 4, 5, 6]` → `[6, 12, 18]`",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-3a"
+      }
+    },
+    {
+      "id": "code-3a",
+      "cell_type": "code",
+      "source": "import java.util.*;\nimport java.util.stream.*;\n\nList<Integer> nums = List.of(1, 2, 3, 4, 5, 6);\n\nList<Integer> result = nums.stream()\n    .filter(n -> n % 2 == 0)\n    .map(n -> n * 3)\n    .collect(Collectors.toList());\n\n// --- do not edit below ---\nassert result.equals(List.of(6, 12, 18)) : \"Expected [6, 12, 18] but got \" + result;\nSystem.out.println(\"3a passed! result = \" + result);",
+      "metadata": {
+        "language": "java",
+        "id": "code-3a",
+        "executionSummary": {
+          "executionOrder": 14,
+          "success": true
+        }
+      },
+      "execution_count": 14,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "3a passed! result = [6, 12, 18]\r\n"
+          },
+          "metadata": {},
+          "execution_count": 14
+        }
+      ]
+    },
+    {
+      "id": "md-3b",
+      "cell_type": "markdown",
+      "source": "### Exercise 3b — Map to different type, filter, reduce\n\nThis exercise mirrors the lecture's `pipe7Test` example.\n\nGiven the array `{\"b3\", \"b7\", \"b1\", \"b9\", \"b4\"}`, write a pipeline that:\n1. Strips the leading `\"b\"` from each string\n2. Parses each remaining string as an `int`\n3. Keeps only values **strictly less than 5**\n4. Returns their **sum** using `reduce`\n\nExpected result: `3 + 1 + 4 = 8`",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-3b"
+      }
+    },
+    {
+      "id": "code-3b",
+      "cell_type": "code",
+      "source": "import java.util.Arrays;\n\nString[] data = {\"b3\", \"b7\", \"b1\", \"b9\", \"b4\"};\n\nint result = Arrays.stream(data)\n    .map(s -> s.substring(1))\n    .mapToInt(Integer::parseInt)\n    .filter(n -> n < 5)\n    .reduce(0, Integer::sum);\n\n// --- do not edit below ---\nassert result == 8 : \"Expected 8 but got \" + result;\nSystem.out.println(\"3b passed! result = \" + result);",
+      "metadata": {
+        "language": "java",
+        "id": "code-3b",
+        "executionSummary": {
+          "executionOrder": 15,
+          "success": true
+        }
+      },
+      "execution_count": 15,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "3b passed! result = 8\r\n"
+          },
+          "metadata": {},
+          "execution_count": 15
+        }
+      ]
+    },
+    {
+      "id": "md-3c",
+      "cell_type": "markdown",
+      "source": "### Exercise 3c — Working with strings end-to-end\n\nGiven a list of words, build a pipeline that:\n1. Removes any word shorter than 4 characters\n2. Converts surviving words to uppercase\n3. Sorts them alphabetically\n4. Collects into a `List<String>`\n\nInput: `[\"the\", \"quick\", \"brown\", \"fox\", \"jumps\", \"over\"]`  \nExpected: `[\"BROWN\", \"JUMPS\", \"OVER\", \"QUICK\"]`",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-3c"
+      }
+    },
+    {
+      "id": "code-3c",
+      "cell_type": "code",
+      "source": "import java.util.*;\nimport java.util.stream.*;\n\nList<String> words = List.of(\"the\", \"quick\", \"brown\", \"fox\", \"jumps\", \"over\");\n\nList<String> result = words.stream()\n    .filter(w -> w.length() >= 4)\n    .map(String::toUpperCase)\n    .sorted()\n    .collect(Collectors.toList());\n\n// --- do not edit below ---\nassert result.equals(List.of(\"BROWN\", \"JUMPS\", \"OVER\", \"QUICK\"))\n    : \"Expected [BROWN, JUMPS, OVER, QUICK] but got \" + result;\nSystem.out.println(\"3c passed! result = \" + result);",
+      "metadata": {
+        "language": "java",
+        "id": "code-3c",
+        "executionSummary": {
+          "executionOrder": 16,
+          "success": true
+        }
+      },
+      "execution_count": 16,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "3c passed! result = [BROWN, JUMPS, OVER, QUICK]\r\n"
+          },
+          "metadata": {},
+          "execution_count": 16
+        }
+      ]
+    },
+    {
+      "id": "md-3d",
+      "cell_type": "markdown",
+      "source": "### Exercise 3d — `collect` to a different form: joining strings\n\nYou can collect into things other than a list. `Collectors.joining(delimiter)` is a terminal collector that concatenates all stream elements into one `String`.\n\n**Task:** From the list of names below, build a pipeline that:\n1. Filters out all names that don't start with `\"A\"`\n2. Sorts alphabetically\n3. Collects them into a single comma-separated string, meaning `\",\"` is the delimiter\n\nExpected result: `\"Alice,Anna,Arthur\"`",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-3d"
+      }
+    },
+    {
+      "id": "code-3d",
+      "cell_type": "code",
+      "source": "import java.util.*;\nimport java.util.stream.*;\n\nList<String> names = List.of(\"Bob\", \"Anna\", \"Alice\", \"Charlie\", \"Arthur\", \"Amy\", \"Diana\");\n\nString result = names.stream()\n    .filter(s -> s.startsWith(\"A\"))\n    .sorted()\n    .collect(Collectors.joining(\",\"));\n\n// --- do not edit below ---\n// Note: Amy is < 4 chars — check the filter condition carefully!\n// Hint: the expected string has exactly three names.\nassert result.equals(\"Alice,Anna,Arthur\") : \"Expected 'Alice,Anna,Arthur' but got '\" + result + \"'\";\nSystem.out.println(\"3d passed! result = \\\"\" + result + \"\\\"\");",
+      "metadata": {
+        "language": "java",
+        "id": "code-3d",
+        "executionSummary": {
+          "executionOrder": 19,
+          "success": true
+        }
+      },
+      "execution_count": 19,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "3d passed! result = \"Alice,Amy,Anna,Arthur\"\r\n"
+          },
+          "metadata": {},
+          "execution_count": 19
+        }
+      ]
+    },
+    {
+      "id": "md-3e",
+      "cell_type": "markdown",
+      "source": "### Exercise 3e — Finding a maximum with a lambda comparator\n\n`Stream.max(Comparator)` finds the largest element in the stream according to the given comparator, but doesn't return the value directly — it wraps it in an `Optional<T>`. To get the actual value out, chain `.get()` onto the end of your pipeline.\n\n**Task:** From the list of words, find the **longest** word.\n\nExpected: `\"strawberry\"`",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-3e"
+      }
+    },
+    {
+      "id": "code-3e",
+      "cell_type": "code",
+      "source": "import java.util.*;\nimport java.util.stream.*;\n\nList<String> words = List.of(\"fig\", \"strawberry\", \"plum\", \"kiwi\", \"apricot\");\n\nString longest = words.stream()\n    .max((a, b) -> Integer.compare(a.length(), b.length()))\n    .get();\n\n// --- do not edit below ---\nassert longest.equals(\"strawberry\") : \"Expected 'strawberry' but got '\" + longest + \"'\";\nSystem.out.println(\"3e passed! longest = \" + longest);",
+      "metadata": {
+        "language": "java",
+        "id": "code-3e",
+        "executionSummary": {
+          "executionOrder": 20,
+          "success": true
+        }
+      },
+      "execution_count": 20,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "3e passed! longest = strawberry\r\n"
+          },
+          "metadata": {},
+          "execution_count": 20
+        }
+      ]
+    },
+    {
+      "id": "md-3f",
+      "cell_type": "markdown",
+      "source": "### Exercise 3f ⭐ — Challenge: multi-step transformation\n\nThis is the most complex exercise. Take your time.\n\nYou are given a list of CSV-style strings, each representing a student's name and score:\n```\n[\"Alice:82\", \"Bob:91\", \"Clara:58\", \"David:74\", \"Eva:91\", \"Frank:63\"]\n```\n\nWrite a pipeline that:\n1. Splits each string on `\":\"` to get the score part\n2. Parses the score as an `int`\n3. Keeps only scores **≥ 70**\n4. Returns the **average** of those scores as a `double`\n\nPassing scores: 82, 91, 74, 91 → average = `(82+91+74+91)/4 = 84.5`\n\nHints:\n- `\"Alice:82\".split(\":\")[1]` gives `\"82\"`\n- Use `mapToInt(...)` instead of `map(...)` for the parsing step — unlike `map`, `mapToInt` converts the stream to an `IntStream`, which gives you access to numeric operations like `average()`\n- `average()` returns an `OptionalDouble` — call `.getAsDouble()` to retrieve it.",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-3f"
+      }
+    },
+    {
+      "id": "code-3f",
+      "cell_type": "code",
+      "source": "import java.util.*;\nimport java.util.stream.*;\n\nList<String> records = List.of(\n    \"Alice:82\", \"Bob:91\", \"Clara:58\", \"David:74\", \"Eva:91\", \"Frank:63\"\n);\n\ndouble avg = records.stream()\n    .map(s -> s.split(\":\")[1])\n    .mapToInt(Integer::parseInt)\n    .filter(score -> score >= 70)\n    .average()\n    .getAsDouble();\n\n// --- do not edit below ---\nassert avg == 84.5 : \"Expected 84.5 but got \" + avg;\nSystem.out.println(\"3f passed! average passing score = \" + avg);",
+      "metadata": {
+        "language": "java",
+        "id": "code-3f",
+        "executionSummary": {
+          "executionOrder": 21,
+          "success": true
+        }
+      },
+      "execution_count": 21,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "3f passed! average passing score = 84.5\r\n"
+          },
+          "metadata": {},
+          "execution_count": 21
+        }
+      ]
+    },
+    {
+      "id": "md-done",
+      "cell_type": "markdown",
+      "source": "---\n## All done!",
+      "metadata": {
+        "language": "markdown",
+        "id": "md-done"
+      }
+    }
+  ]
+}
