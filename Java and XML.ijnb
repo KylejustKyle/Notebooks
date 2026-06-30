@@ -1,0 +1,797 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "7baed27d",
+   "metadata": {},
+   "source": [
+    "# SAX, StAX & DOM \u2014 Practice Notebook\n",
+    "\n",
+    "This notebook focuses primarily on **SAX, StAX, and DOM** \u2014 the three Java\n",
+    "techniques for reading and writing XML. The fundamentals of what XML is and\n",
+    "how it's structured are more the domain of Text Technology, so they're not\n",
+    "covered here.\n",
+    "\n",
+    "You'll work through a short conceptual warm-up, then write small pieces of\n",
+    "real SAX, StAX, and DOM code against the same example document, and finish\n",
+    "with a few \"which technology would you pick?\" scenarios.\n",
+    "\n",
+    "**Estimated time: ~60\u201370 minutes.**\n",
+    "\n",
+    "All exercises use the same XML string, a small address book:\n",
+    "\n",
+    "```xml\n",
+    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n",
+    "<addressbook>\n",
+    "    <address>\n",
+    "        <forename>Camellya</forename>\n",
+    "        <surname/>\n",
+    "        <email>crazy@blackshores.com</email>\n",
+    "        <powerlevel>340</powerlevel>\n",
+    "    </address>\n",
+    "    <address>\n",
+    "        <forename>Cantarella</forename>\n",
+    "        <surname>Fisalia</surname>\n",
+    "        <email></email>\n",
+    "        <powerlevel>875</powerlevel>\n",
+    "    </address>\n",
+    "    <address>\n",
+    "        <forename>Ciaccona</forename>\n",
+    "        <surname></surname>\n",
+    "        <email>kawaii-bard@wuwa.com</email>\n",
+    "        <powerlevel>120</powerlevel>\n",
+    "    </address>\n",
+    "    <address>\n",
+    "        <forename>Carlotta</forename>\n",
+    "        <surname>Montelli</surname>\n",
+    "        <email>opal@rinascita.com</email>\n",
+    "        <powerlevel>610</powerlevel>\n",
+    "    </address>\n",
+    "</addressbook>\n",
+    "```\n",
+    "\n",
+    "Notice that `surname` and `email` aren't always filled in for every entry \u2014\n",
+    "that's intentional. Empty and self-closing elements behave slightly\n",
+    "differently depending on which API you're using, and the exercises below\n",
+    "will have you run into that directly rather than just being told about it.\n",
+    "\n",
+    "Run the cell below first \u2014 every later section reuses the `addressBookXml`\n",
+    "variable it defines."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "d89c8151",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "String addressBookXml =\n",
+    "    \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n\" +\n",
+    "    \"<addressbook>\\n\" +\n",
+    "    \"    <address>\\n\" +\n",
+    "    \"        <forename>Camellya</forename>\\n\" +\n",
+    "    \"        <surname/>\\n\" +\n",
+    "    \"        <email>crazy@blackshores.com</email>\\n\" +\n",
+    "    \"        <powerlevel>340</powerlevel>\\n\" +\n",
+    "    \"    </address>\\n\" +\n",
+    "    \"    <address>\\n\" +\n",
+    "    \"        <forename>Cantarella</forename>\\n\" +\n",
+    "    \"        <surname>Fisalia</surname>\\n\" +\n",
+    "    \"        <email></email>\\n\" +\n",
+    "    \"        <powerlevel>875</powerlevel>\\n\" +\n",
+    "    \"    </address>\\n\" +\n",
+    "    \"    <address>\\n\" +\n",
+    "    \"        <forename>Ciaccona</forename>\\n\" +\n",
+    "    \"        <surname></surname>\\n\" +\n",
+    "    \"        <email>kawaii-bard@wuwa.com</email>\\n\" +\n",
+    "    \"        <powerlevel>120</powerlevel>\\n\" +\n",
+    "    \"    </address>\\n\" +\n",
+    "    \"    <address>\\n\" +\n",
+    "    \"        <forename>Carlotta</forename>\\n\" +\n",
+    "    \"        <surname>Montelli</surname>\\n\" +\n",
+    "    \"        <email>opal@rinascita.com</email>\\n\" +\n",
+    "    \"        <powerlevel>610</powerlevel>\\n\" +\n",
+    "    \"    </address>\\n\" +\n",
+    "    \"</addressbook>\";\n",
+    "System.out.println(\"addressBookXml ready (\" + addressBookXml.length() + \" characters)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "288f3b51",
+   "metadata": {},
+   "source": [
+    "## Part 1 \u2014 Warm-Up\n",
+    "\n",
+    "Six short conceptual questions. Type your answer between the quotes in each\n",
+    "answer cell, run it, then run the checker cell below it. These are about\n",
+    "the *technologies*, not about XML syntax."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f1fa6274",
+   "metadata": {},
+   "source": [
+    "**1a.** SAX is described as a parser where your application doesn't\n",
+    "control the flow \u2014 events are delivered to it as the document is read.\n",
+    "Answer with a single word, no extra punctuation: what's the term for this\n",
+    "style of parsing (used in the slides)?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "f201256a",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "String q1a = \"\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "3b64898a",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "int q1aHash = q1a.trim().toLowerCase().hashCode();\n",
+    "System.out.println(q1aHash == 3452698\n",
+    "    ? \"1a: passed!\"\n",
+    "    : \"1a: not quite \\u2014 check your answer and re-run.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bcac4049",
+   "metadata": {},
+   "source": [
+    "**1b.** StAX is different: your code calls `hasNext()` / `next()` and\n",
+    "actively reads events when it wants them. Answer with a single word: what's\n",
+    "the term for this style?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "3262ae66",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "String q1b = \"\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "15edc19f",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "int q1bHash = q1b.trim().toLowerCase().hashCode();\n",
+    "System.out.println(q1bHash == 3452485\n",
+    "    ? \"1b: passed!\"\n",
+    "    : \"1b: not quite \\u2014 check your answer and re-run.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3e331261",
+   "metadata": {},
+   "source": [
+    "**1c.** Which of the three technologies (SAX, StAX, or DOM) builds a\n",
+    "complete, navigable tree of the whole document in memory? Answer with a\n",
+    "single word: `SAX`, `StAX`, or `DOM`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "08618b2e",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "String q1c = \"\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "a6b6db4a",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "int q1cHash = q1c.trim().toLowerCase().hashCode();\n",
+    "System.out.println(q1cHash == 99650\n",
+    "    ? \"1c: passed!\"\n",
+    "    : \"1c: not quite \\u2014 check your answer and re-run.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "57f6a05e",
+   "metadata": {},
+   "source": [
+    "**1d.** Which of the three technologies has *no* write/serialization\n",
+    "support at all \u2014 it can only read XML, never produce it? Answer with a\n",
+    "single word: `SAX`, `StAX`, or `DOM`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "09a0a498",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "String q1d = \"\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "b5e938c2",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "int q1dHash = q1d.trim().toLowerCase().hashCode();\n",
+    "System.out.println(q1dHash == 113642\n",
+    "    ? \"1d: passed!\"\n",
+    "    : \"1d: not quite \\u2014 check your answer and re-run.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "fd2d04da",
+   "metadata": {},
+   "source": [
+    "**1e.** Which technology lets you navigate a parsed document back and\n",
+    "forth, and add, remove, or modify nodes after parsing? Answer with a single\n",
+    "word: `SAX`, `StAX`, or `DOM`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "f267b50c",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "String q1e = \"\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "834394b4",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "int q1eHash = q1e.trim().toLowerCase().hashCode();\n",
+    "System.out.println(q1eHash == 99650\n",
+    "    ? \"1e: passed!\"\n",
+    "    : \"1e: not quite \\u2014 check your answer and re-run.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "dd50e978",
+   "metadata": {},
+   "source": [
+    "**1f.** True or false: DOM is generally the right choice for parsing\n",
+    "multi-gigabyte XML files. Answer with a single word: `true` or `false`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "b6d017b4",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "String q1f = \"\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "fcda6410",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "int q1fHash = q1f.trim().toLowerCase().hashCode();\n",
+    "System.out.println(q1fHash == 97196323\n",
+    "    ? \"1f: passed!\"\n",
+    "    : \"1f: not quite \\u2014 check your answer and re-run.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "acc517e4",
+   "metadata": {},
+   "source": [
+    "## Part 2 \u2014 SAX\n",
+    "\n",
+    "SAX pushes events at a `DefaultHandler` you write. Below is a handler that\n",
+    "should count the `<address>` elements in the address book and sum up every\n",
+    "`<powerlevel>` value. Unlike a value stored in an *attribute*, a\n",
+    "`<powerlevel>` value is *element text content* \u2014 so you can't just read it\n",
+    "off in `startElement` the way you'd read an attribute. You need to track\n",
+    "\"am I currently inside a `<powerlevel>` element?\" and pick the text up in\n",
+    "`characters()`, then react again in `endElement()`.\n",
+    "\n",
+    "Fill in the four `// TODO` lines."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "1f1e6cd1",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "import org.xml.sax.helpers.DefaultHandler;\n",
+    "import org.xml.sax.Attributes;\n",
+    "import org.xml.sax.SAXException;\n",
+    "\n",
+    "class AddressBookSaxHandler extends DefaultHandler {\n",
+    "    int addressCount = 0;\n",
+    "    int totalPower = 0;\n",
+    "    boolean insidePowerlevel = false;\n",
+    "\n",
+    "    @Override\n",
+    "    public void startElement(String uri, String localName, String qName, Attributes attrs)\n",
+    "            throws SAXException {\n",
+    "        if (qName.equals(\"address\")) {\n",
+    "            // TODO: increment addressCount by 1\n",
+    "        }\n",
+    "        if (qName.equals(\"powerlevel\")) {\n",
+    "            // TODO: set insidePowerlevel to true\n",
+    "        }\n",
+    "    }\n",
+    "\n",
+    "    @Override\n",
+    "    public void characters(char[] ch, int start, int length) throws SAXException {\n",
+    "        if (insidePowerlevel) {\n",
+    "            String text = new String(ch, start, length).trim();\n",
+    "            if (!text.isEmpty()) {\n",
+    "                // TODO: parse text as an int and add it to totalPower\n",
+    "            }\n",
+    "        }\n",
+    "    }\n",
+    "\n",
+    "    @Override\n",
+    "    public void endElement(String uri, String localName, String qName) throws SAXException {\n",
+    "        if (qName.equals(\"powerlevel\")) {\n",
+    "            // TODO: set insidePowerlevel back to false\n",
+    "        }\n",
+    "    }\n",
+    "}\n",
+    "System.out.println(\"AddressBookSaxHandler defined.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "92f99f06",
+   "metadata": {},
+   "source": [
+    "Now run the parser. This part is already complete \u2014 just run it and\n",
+    "see what your handler produced."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "a9e4d132",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "import javax.xml.parsers.SAXParserFactory;\n",
+    "import javax.xml.parsers.SAXParser;\n",
+    "import org.xml.sax.InputSource;\n",
+    "import java.io.StringReader;\n",
+    "\n",
+    "AddressBookSaxHandler saxHandler = new AddressBookSaxHandler();\n",
+    "SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();\n",
+    "saxParser.parse(new InputSource(new StringReader(addressBookXml)), saxHandler);\n",
+    "\n",
+    "System.out.println(\"Addresses found: \" + saxHandler.addressCount);\n",
+    "System.out.println(\"Total power level: \" + saxHandler.totalPower);"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0e3d50b7",
+   "metadata": {},
+   "source": [
+    "Checker \u2014 run after the parser cell above."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "12893d02",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "boolean saxCorrect = saxHandler.addressCount == 4 && saxHandler.totalPower == 1945;\n",
+    "System.out.println(saxCorrect ? \"Part 2 (SAX): passed!\" : \"Part 2 (SAX): not quite \\u2014 check your TODOs and re-run both cells.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f722d815",
+   "metadata": {},
+   "source": [
+    "## Part 3 \u2014 StAX\n",
+    "\n",
+    "StAX is also a serial, event-based reader, but *your* code pulls events\n",
+    "with `hasNext()` / `nextEvent()` instead of waiting for callbacks. Below,\n",
+    "fill in the three `// TODO` lines so the loop collects every `<forename>`\n",
+    "text into the `forenames` list.\n",
+    "\n",
+    "Reminder from the slides: cast with `event.asStartElement()` /\n",
+    "`event.asCharacters()` / `event.asEndElement()` only after checking\n",
+    "`isStartElement()` / `isCharacters()` / `isEndElement()`, to avoid a\n",
+    "`ClassCastException`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "fb8c8a52",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "import javax.xml.stream.XMLInputFactory;\n",
+    "import javax.xml.stream.XMLEventReader;\n",
+    "import javax.xml.stream.events.XMLEvent;\n",
+    "import javax.xml.stream.events.StartElement;\n",
+    "import javax.xml.stream.events.Characters;\n",
+    "import java.io.StringReader;\n",
+    "import java.util.ArrayList;\n",
+    "import java.util.List;\n",
+    "\n",
+    "XMLInputFactory staxInputFactory = XMLInputFactory.newInstance();\n",
+    "XMLEventReader staxReader = staxInputFactory.createXMLEventReader(new StringReader(addressBookXml));\n",
+    "\n",
+    "List<String> forenames = new ArrayList<>();\n",
+    "boolean insideForename = false;\n",
+    "\n",
+    "while (staxReader.hasNext()) {\n",
+    "    XMLEvent event = staxReader.nextEvent();\n",
+    "\n",
+    "    if (event.isStartElement()) {\n",
+    "        StartElement se = event.asStartElement();\n",
+    "        if (se.getName().getLocalPart().equals(\"forename\")) {\n",
+    "            // TODO: set insideForename to true\n",
+    "        }\n",
+    "    }\n",
+    "\n",
+    "    if (event.isCharacters() && insideForename) {\n",
+    "        Characters chars = event.asCharacters();\n",
+    "        // TODO: add the trimmed text (chars.getData()) to the forenames list\n",
+    "    }\n",
+    "\n",
+    "    if (event.isEndElement()) {\n",
+    "        // TODO: if this end tag's local name is \"forename\", set insideForename back to false\n",
+    "    }\n",
+    "}\n",
+    "\n",
+    "System.out.println(forenames);"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "766bbca3",
+   "metadata": {},
+   "source": [
+    "Checker:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "e1495038",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "boolean staxCorrect = forenames.equals(java.util.List.of(\"Camellya\", \"Cantarella\", \"Ciaccona\", \"Carlotta\"));\n",
+    "System.out.println(staxCorrect ? \"Part 3 (StAX): passed!\" : \"Part 3 (StAX): not quite \\u2014 check your TODOs and re-run.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1f7b9a17",
+   "metadata": {},
+   "source": [
+    "## Part 4 \u2014 DOM\n",
+    "\n",
+    "DOM is different from the other two: it parses the whole document into an\n",
+    "in-memory tree first, *then* you navigate it however you like \u2014 including\n",
+    "modifying it, which SAX and StAX cannot do.\n",
+    "\n",
+    "**4a.** Parse `addressBookXml` into a `Document`, then collect every\n",
+    "`<email>` element's text content into the `emails` list. Fill in the one\n",
+    "`// TODO`.\n",
+    "\n",
+    "Look closely at what you get back for Cantarella's `<email></email>` once\n",
+    "you run it \u2014 an empty element's `getTextContent()` is not `null`, it's an\n",
+    "empty string `\"\"`. That matters: code that assumed `null` and guarded with\n",
+    "a null-check would let an empty string slip through and could blow up\n",
+    "elsewhere (e.g. an unguarded `.length()` call downstream), while code that\n",
+    "assumes there's always *some* text would just silently produce a blank\n",
+    "entry instead of flagging that the field was never filled in."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "69353d68",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "import javax.xml.parsers.DocumentBuilderFactory;\n",
+    "import javax.xml.parsers.DocumentBuilder;\n",
+    "import org.w3c.dom.Document;\n",
+    "import org.w3c.dom.NodeList;\n",
+    "import org.xml.sax.InputSource;\n",
+    "import java.io.StringReader;\n",
+    "import java.util.ArrayList;\n",
+    "import java.util.List;\n",
+    "\n",
+    "DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();\n",
+    "DocumentBuilder domBuilder = domFactory.newDocumentBuilder();\n",
+    "Document addressBookDoc = domBuilder.parse(new InputSource(new StringReader(addressBookXml)));\n",
+    "\n",
+    "NodeList emailNodes = addressBookDoc.getElementsByTagName(\"email\");\n",
+    "List<String> emails = new ArrayList<>();\n",
+    "\n",
+    "for (int i = 0; i < emailNodes.getLength(); i++) {\n",
+    "    // TODO: get the trimmed text content of emailNodes.item(i)\n",
+    "    //       and add it to the emails list\n",
+    "}\n",
+    "\n",
+    "System.out.println(emails);"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "aaafa57a",
+   "metadata": {},
+   "source": [
+    "Checker for 4a:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "5c15db48",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "boolean domReadCorrect = emails.equals(java.util.List.of(\n",
+    "    \"crazy@blackshores.com\", \"\", \"kawaii-bard@wuwa.com\", \"opal@rinascita.com\"));\n",
+    "System.out.println(domReadCorrect ? \"Part 4a (DOM read): passed!\" : \"Part 4a (DOM read): not quite \\u2014 check your TODO and re-run.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f5b133b1",
+   "metadata": {},
+   "source": [
+    "**4b.** Now do something SAX and StAX *cannot* do: modify the parsed\n",
+    "tree. Build a new `<address>` element (with `forename`, `surname`, `email`,\n",
+    "and `powerlevel` children) and append it to the root. Fill in the two\n",
+    "`// TODO` lines."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "32ce9458",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "import org.w3c.dom.Element;\n",
+    "\n",
+    "Element newAddress = addressBookDoc.createElement(\"address\");\n",
+    "\n",
+    "Element newForename = addressBookDoc.createElement(\"forename\");\n",
+    "newForename.setTextContent(\"Lingyang\");\n",
+    "\n",
+    "Element newSurname = addressBookDoc.createElement(\"surname\");\n",
+    "newSurname.setTextContent(\"\");\n",
+    "\n",
+    "Element newEmail = addressBookDoc.createElement(\"email\");\n",
+    "newEmail.setTextContent(\"thunder@rinascita.com\");\n",
+    "\n",
+    "Element newPowerlevel = addressBookDoc.createElement(\"powerlevel\");\n",
+    "newPowerlevel.setTextContent(\"-500\");\n",
+    "\n",
+    "// TODO: append newForename, newSurname, newEmail, and newPowerlevel as children of newAddress (four calls to appendChild)\n",
+    "\n",
+    "\n",
+    "Element addressBookRoot = addressBookDoc.getDocumentElement();\n",
+    "// TODO: append newAddress as a child of addressBookRoot\n",
+    "\n",
+    "\n",
+    "NodeList updatedAddresses = addressBookDoc.getElementsByTagName(\"address\");\n",
+    "System.out.println(\"Addresses after edit: \" + updatedAddresses.getLength());"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7cb5a02a",
+   "metadata": {},
+   "source": [
+    "Checker for 4b:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "35ee212b",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "boolean domWriteCorrect = updatedAddresses.getLength() == 5;\n",
+    "System.out.println(domWriteCorrect ? \"Part 4b (DOM write): passed!\" : \"Part 4b (DOM write): not quite \\u2014 check your TODOs and re-run.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "213b08b8",
+   "metadata": {},
+   "source": [
+    "## Part 5 \u2014 Pick the Right Technology\n",
+    "\n",
+    "For each scenario, type which technology (`SAX`, `StAX`, or `DOM`) fits\n",
+    "best, based on the advantages/disadvantages from the slides."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6b533339",
+   "metadata": {},
+   "source": [
+    "**5a.** A small configuration file (a few KB) needs to be loaded,\n",
+    "several values changed based on user input, and the whole thing saved\n",
+    "back to disk afterwards."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "3b123f78",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "String q5a = \"\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "2f1c16d9",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "int q5aHash = q5a.trim().toLowerCase().hashCode();\n",
+    "System.out.println(q5aHash == 99650\n",
+    "    ? \"5a: passed!\"\n",
+    "    : \"5a: not quite \\u2014 check your answer and re-run.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "dc98f931",
+   "metadata": {},
+   "source": [
+    "**5b.** A 5 GB server log stored as XML needs to be scanned exactly\n",
+    "once, read-only, computing a few statistics as fast as possible. You will\n",
+    "never need to look at more than one entry at a time."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "32ea74b4",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "String q5b = \"\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "5eb122eb",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "int q5bHash = q5b.trim().toLowerCase().hashCode();\n",
+    "System.out.println(q5bHash == 113642\n",
+    "    ? \"5b: passed!\"\n",
+    "    : \"5b: not quite \\u2014 check your answer and re-run.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0194cafc",
+   "metadata": {},
+   "source": [
+    "**5c.** You need to read a large XML stream and, while reading it,\n",
+    "generate a brand-new (transformed) XML output stream \u2014 without ever\n",
+    "holding the whole input *or* output document in memory at once."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "c7260eaa",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "String q5c = \"\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "ebde010d",
+   "metadata": {},
+   "execution_count": null,
+   "outputs": [],
+   "source": [
+    "int q5cHash = q5c.trim().toLowerCase().hashCode();\n",
+    "System.out.println(q5cHash == 3540568\n",
+    "    ? \"5c: passed!\"\n",
+    "    : \"5c: not quite \\u2014 check your answer and re-run.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a1ba09ca",
+   "metadata": {},
+   "source": [
+    "## All done\n",
+    "\n",
+    "That covers all three technologies. If you want a one-line summary to\n",
+    "keep in mind:\n",
+    "\n",
+    "- **SAX** \u2014 push, fast, read-only, one node at a time.\n",
+    "- **StAX** \u2014 pull, also fast and serial, but can additionally write XML.\n",
+    "- **DOM** \u2014 full tree in memory, slowest/heaviest, but the only one that\n",
+    "  lets you navigate freely and modify the document."
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Java",
+   "language": "java",
+   "name": "java"
+  },
+  "language_info": {
+   "codemirror_mode": "java",
+   "file_extension": ".jshell",
+   "mimetype": "text/x-java-source",
+   "name": "Java",
+   "pygments_lexer": "java",
+   "version": "21.0.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

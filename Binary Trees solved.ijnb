@@ -1,0 +1,1045 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "b9758d0a",
+   "metadata": {},
+   "source": [
+    "# Binary Trees: Terminology & Traversals \u2014 Practice \u2014 \u26a0\ufe0f SOLVED / ANSWER KEY \u26a0\ufe0f\n",
+    "\n",
+    "**\u26a0\ufe0f This is the SOLVED / answer-key version, for instructor use or post-deadline release only. Do not distribute before students have completed the exercise.**\n",
+    "\n",
+    "**Instructions:** for each Part, **fill in and run every exercise block first**, then run the **checker cell** at the end of that Part to grade all of them at once. Don't run the checker cell partway through \u2014 any exercise you haven't filled in yet will simply be marked wrong, since it still holds its empty default value.\n",
+    "\n",
+    "**Format:** every question gives you a place to type a plaintext answer (a word, short phrase, or a comma-separated sequence) directly into a `String` variable. **Running an exercise cell only saves your answer \u2014 it does not grade it.** Grading happens in the separate checker cell further down (one checker per Part, covering several exercises at once). You can edit your answers and re-run both the exercise cells and the checker cell as many times as you like.\n",
+    "\n",
+    "**Time budget:** roughly 60 minutes total.\n",
+    "- Part 1 \u2014 Terminology (~15 min)\n",
+    "- Part 2 \u2014 Traversal definitions (~10 min)\n",
+    "- Part 3 \u2014 Hand-tracing traversals on given trees (~35 min)\n",
+    "\n",
+    "Run the setup cell below first \u2014 it only needs to run once."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8e82fc30",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import java.util.*;\n",
+    "\n",
+    "// Checks a single short-answer term against a list of acceptable answers.\n",
+    "// Comparison is case-insensitive and ignores leading/trailing whitespace.\n",
+    "public boolean checkTerm(String given, String... accepted) {\n",
+    "    String norm = given.trim().toLowerCase();\n",
+    "    for (String a : accepted) {\n",
+    "        if (norm.equals(a.trim().toLowerCase())) {\n",
+    "            System.out.println(\"Correct!\");\n",
+    "            return true;\n",
+    "        }\n",
+    "    }\n",
+    "    System.out.println(\"Not quite. You answered: \\\"\" + given + \"\\\"\");\n",
+    "    return false;\n",
+    "}\n",
+    "\n",
+    "// Checks a traversal sequence like \"X, Q, M, T, R, Z, J\" against the correct sequence.\n",
+    "// Accepts variation in spacing/commas and is case-insensitive.\n",
+    "public boolean checkSequence(String given, String correctCsv) {\n",
+    "    String[] givenParts = given.trim().toLowerCase().split(\"[,\\\\s]+\");\n",
+    "    String[] correctParts = correctCsv.trim().toLowerCase().split(\"[,\\\\s]+\");\n",
+    "    boolean ok = Arrays.equals(givenParts, correctParts);\n",
+    "    if (ok) {\n",
+    "        System.out.println(\"Correct! Sequence: \" + String.join(\", \", correctParts));\n",
+    "    } else {\n",
+    "        System.out.println(\"Not quite.\");\n",
+    "        System.out.println(\"  You answered:  \" + String.join(\", \", givenParts));\n",
+    "        System.out.println(\"  Correct order: \" + String.join(\", \", correctParts));\n",
+    "    }\n",
+    "    return ok;\n",
+    "}\n",
+    "\n",
+    "System.out.println(\"Checker functions loaded.\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9c1c7125",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "## Part 1 \u2014 Terminology (~15 min)\n",
+    "\n",
+    "Short answers only \u2014 a single word or short phrase. Don't overthink the wording; the checker accepts common variants.\n",
+    "\n",
+    "**Fill in all of 1a\u20131q below, then run the single checker cell at the end of Part 1.**"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d1253966",
+   "metadata": {},
+   "source": [
+    "### Exercise 1a\n",
+    "\n",
+    "What do we call the set of nodes connected by edges that show a relationship between them?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "afd51ebd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1a = \"tree\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "49da3efe",
+   "metadata": {},
+   "source": [
+    "### Exercise 1b\n",
+    "\n",
+    "What is the term for the single node at the top level of a tree (the one with no parent)?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b3b3cb1e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1b = \"root\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "dea5ca58",
+   "metadata": {},
+   "source": [
+    "### Exercise 1c\n",
+    "\n",
+    "Nodes are arranged in levels that indicate the hierarchy of the tree, with the root at level 1. What is the more general term (used outside these slides, but for the same idea) for a node's level, i.e. how far down from the root it sits?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b2a409aa",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1c = \"depth\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1318ae77",
+   "metadata": {},
+   "source": [
+    "### Exercise 1d\n",
+    "\n",
+    "The nodes directly below a given node are called its what?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "cc432059",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1d = \"children\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "675d6eea",
+   "metadata": {},
+   "source": [
+    "### Exercise 1e\n",
+    "\n",
+    "The node directly above a given node is called its what?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "96611a24",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1e = \"parent\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a1f4fa5d",
+   "metadata": {},
+   "source": [
+    "### Exercise 1f\n",
+    "\n",
+    "What do we call nodes that share the same parent?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "55f965d2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1f = \"siblings\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e0f0224c",
+   "metadata": {},
+   "source": [
+    "### Exercise 1g\n",
+    "\n",
+    "What do we call the nodes below a given node, i.e. all nodes reachable on downward paths to the leaves?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "710c64da",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1g = \"descendants\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "02014afa",
+   "metadata": {},
+   "source": [
+    "### Exercise 1h\n",
+    "\n",
+    "What do we call the nodes above a given node, i.e. all nodes on the upward path toward the root?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9aa9d50e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1h = \"ancestors\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6b669af2",
+   "metadata": {},
+   "source": [
+    "### Exercise 1i\n",
+    "\n",
+    "What do we call a node that has no children?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "101c4258",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1i = \"leaf\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "934f2f78",
+   "metadata": {},
+   "source": [
+    "### Exercise 1j\n",
+    "\n",
+    "What is the term used in these slides for a node that is NOT a leaf?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ae3ee382",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1j = \"interior node\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a5007cda",
+   "metadata": {},
+   "source": [
+    "### Exercise 1k\n",
+    "\n",
+    "A tree rooted at one of a node's children is called what, relative to that node?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6cdfd029",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1k = \"subtree\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bb5f1c1f",
+   "metadata": {},
+   "source": [
+    "### Exercise 1l\n",
+    "\n",
+    "What is the term for the sequence of nodes you pass through, starting at the root and moving along edges, to reach a given node?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e0fc649d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1l = \"path\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e701ba83",
+   "metadata": {},
+   "source": [
+    "### Exercise 1m\n",
+    "\n",
+    "What is the term for the number of edges that make up a path?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "df49d670",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1m = \"length\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "409a48d5",
+   "metadata": {},
+   "source": [
+    "### Exercise 1n\n",
+    "\n",
+    "What is the term for the number of levels in a tree (equivalently, the number of nodes along the longest root-to-leaf path)?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "822f1421",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1n = \"height\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "15adb6ce",
+   "metadata": {},
+   "source": [
+    "### Exercise 1o\n",
+    "\n",
+    "What do we call a tree-like data structure that DOES allow circularity (unlike a tree, where the path to any node is unique)?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f3874ea2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1o = \"graph\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "826bc872",
+   "metadata": {},
+   "source": [
+    "### Exercise 1p\n",
+    "\n",
+    "A tree in which nodes have at most n children is called what kind of tree?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "305d0590",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1p = \"n-ary tree\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8c06cb93",
+   "metadata": {},
+   "source": [
+    "### Exercise 1q\n",
+    "\n",
+    "A tree whose nodes have at most 2 children is specifically called what?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "add5256c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer1q = \"binary tree\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "558d3f0f",
+   "metadata": {},
+   "source": [
+    "### Check your Part 1 answers\n",
+    "\n",
+    "Run this cell once you've filled in all of Part 1 above."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3f7b997e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "int part1Score = 0;\n",
+    "\n",
+    "if (checkTerm(answer1a, \"tree\")) part1Score++;\n",
+    "if (checkTerm(answer1b, \"root\", \"root node\")) part1Score++;\n",
+    "if (checkTerm(answer1c, \"depth\", \"level\")) part1Score++;\n",
+    "if (checkTerm(answer1d, \"children\", \"child\")) part1Score++;\n",
+    "if (checkTerm(answer1e, \"parent\")) part1Score++;\n",
+    "if (checkTerm(answer1f, \"sibling\", \"siblings\")) part1Score++;\n",
+    "if (checkTerm(answer1g, \"descendant\", \"descendants\")) part1Score++;\n",
+    "if (checkTerm(answer1h, \"ancestor\", \"ancestors\")) part1Score++;\n",
+    "if (checkTerm(answer1i, \"leaf\", \"leaf node\")) part1Score++;\n",
+    "if (checkTerm(answer1j, \"interior\", \"interior node\", \"non-leaf node\", \"non-leaf\")) part1Score++;\n",
+    "if (checkTerm(answer1k, \"subtree\", \"a subtree\")) part1Score++;\n",
+    "if (checkTerm(answer1l, \"path\")) part1Score++;\n",
+    "if (checkTerm(answer1m, \"length\", \"length of a path\", \"path length\")) part1Score++;\n",
+    "if (checkTerm(answer1n, \"height\")) part1Score++;\n",
+    "if (checkTerm(answer1o, \"graph\")) part1Score++;\n",
+    "if (checkTerm(answer1p, \"n-ary\", \"n-ary tree\", \"nary tree\", \"nary\")) part1Score++;\n",
+    "if (checkTerm(answer1q, \"binary tree\", \"binary\")) part1Score++;\n",
+    "\n",
+    "System.out.println();\n",
+    "System.out.println(\"Part 1 score: \" + part1Score + \" / 17\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "559d4bb3",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "## Part 2 \u2014 Traversal Definitions (~10 min)\n",
+    "\n",
+    "For each traversal, describe the **order** in which root, left subtree, and right subtree are visited. Type your answer as three words separated by commas, e.g. `left, root, right`. Just use the plain words \"left\", \"root\", \"right\" \u2014 no need for full sentences like \"visit the left subtree first.\" The order you list them in is what's graded.\n",
+    "\n",
+    "**Fill in 2a\u20132c below, then run the checker cell at the end of Part 2.**"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e534f8d1",
+   "metadata": {},
+   "source": [
+    "### Exercise 2a\n",
+    "\n",
+    "Preorder traversal visits the root, left subtree, and right subtree in what order?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9c5222c1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer2a = \"root, left, right\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f025ce63",
+   "metadata": {},
+   "source": [
+    "### Exercise 2b\n",
+    "\n",
+    "Inorder traversal visits the root, left subtree, and right subtree in what order?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "81907bc1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer2b = \"left, root, right\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "fe9653b7",
+   "metadata": {},
+   "source": [
+    "### Exercise 2c\n",
+    "\n",
+    "Postorder traversal visits the root, left subtree, and right subtree in what order?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d77a015d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer2c = \"left, right, root\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9b82b9ec",
+   "metadata": {},
+   "source": [
+    "### Check your Part 2 answers"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6f6bfe46",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "int part2Score = 0;\n",
+    "\n",
+    "if (checkSequence(answer2a, \"root, left, right\")) part2Score++;\n",
+    "if (checkSequence(answer2b, \"left, root, right\")) part2Score++;\n",
+    "if (checkSequence(answer2c, \"left, right, root\")) part2Score++;\n",
+    "\n",
+    "System.out.println();\n",
+    "System.out.println(\"Part 2 score: \" + part2Score + \" / 3\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4415b94b",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "## Part 3 \u2014 Hand-Tracing Traversals (~35 min)\n",
+    "\n",
+    "For each tree below, work out each traversal **by hand** (no code, no running anything except the checker) and type the sequence of node labels as a comma-separated list, e.g. `X, Q, M, T, R, Z, J`. Spacing doesn't matter and the checker is case-insensitive.\n",
+    "\n",
+    "In addition to preorder/inorder/postorder, each tree also asks for a **level-order** traversal: visit nodes level by level (the \"Level 1, Level 2, ...\" levels from Part 1's terminology), and within each level, visit left to right.\n",
+    "\n",
+    "**Each tree's diagram is repeated above every question so you don't have to scroll back and forth. Fill in all of a tree's exercises first, then run that tree's checker cell.**"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "361cde9d",
+   "metadata": {},
+   "source": [
+    "### Tree 1\n",
+    "\n",
+    "```\n",
+    "         X\n",
+    "        / \\\n",
+    "       Q   Z\n",
+    "      / \\   \\\n",
+    "     M   T   J\n",
+    "        /\n",
+    "       R\n",
+    "```\n",
+    "\n",
+    "**3a.** Give the **preorder** traversal of Tree 1."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b81c3d1d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer3a = \"X, Q, M, T, R, Z, J\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e4b996b1",
+   "metadata": {},
+   "source": [
+    "### Tree 1\n",
+    "\n",
+    "```\n",
+    "         X\n",
+    "        / \\\n",
+    "       Q   Z\n",
+    "      / \\   \\\n",
+    "     M   T   J\n",
+    "        /\n",
+    "       R\n",
+    "```\n",
+    "\n",
+    "**3b.** Give the **inorder** traversal of Tree 1."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8dad567f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer3b = \"M, Q, R, T, X, Z, J\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f061a29c",
+   "metadata": {},
+   "source": [
+    "### Tree 1\n",
+    "\n",
+    "```\n",
+    "         X\n",
+    "        / \\\n",
+    "       Q   Z\n",
+    "      / \\   \\\n",
+    "     M   T   J\n",
+    "        /\n",
+    "       R\n",
+    "```\n",
+    "\n",
+    "**3c.** Give the **postorder** traversal of Tree 1."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d8200a69",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer3c = \"M, R, T, Q, J, Z, X\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7dcfdcff",
+   "metadata": {},
+   "source": [
+    "### Tree 1\n",
+    "\n",
+    "```\n",
+    "         X\n",
+    "        / \\\n",
+    "       Q   Z\n",
+    "      / \\   \\\n",
+    "     M   T   J\n",
+    "        /\n",
+    "       R\n",
+    "```\n",
+    "\n",
+    "**3d.** Give the **level-order** traversal of Tree 1."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "402b251b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer3d = \"X, Q, Z, M, T, J, R\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "023cdea1",
+   "metadata": {},
+   "source": [
+    "### Check Tree 1 answers"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "67ca9ac3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "int tree1Score = 0;\n",
+    "if (checkSequence(answer3a, \"X, Q, M, T, R, Z, J\")) tree1Score++;\n",
+    "if (checkSequence(answer3b, \"M, Q, R, T, X, Z, J\")) tree1Score++;\n",
+    "if (checkSequence(answer3c, \"M, R, T, Q, J, Z, X\")) tree1Score++;\n",
+    "if (checkSequence(answer3d, \"X, Q, Z, M, T, J, R\")) tree1Score++;\n",
+    "System.out.println();\n",
+    "System.out.println(\"Tree 1 score: \" + tree1Score + \" / 4\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a611bbbc",
+   "metadata": {},
+   "source": [
+    "### Tree 2\n",
+    "\n",
+    "```\n",
+    "            M\n",
+    "          /   \\\n",
+    "         H     T\n",
+    "        / \\     \\\n",
+    "       E   K     W\n",
+    "        \\       /\n",
+    "         F     S\n",
+    "```\n",
+    "\n",
+    "Note the empty branches: `H` has both children, but `E` only has a right child (`F`), `T` only has a right child (`W`), and `W` only has a left child (`S`). Be careful \u2014 these \"gaps\" are exactly where it's easy to make a mistake.\n",
+    "\n",
+    "**3e.** Give the **preorder** traversal of Tree 2."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "5a3e3c47",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer3e = \"M, H, E, F, K, T, W, S\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0f990d01",
+   "metadata": {},
+   "source": [
+    "### Tree 2\n",
+    "\n",
+    "```\n",
+    "            M\n",
+    "          /   \\\n",
+    "         H     T\n",
+    "        / \\     \\\n",
+    "       E   K     W\n",
+    "        \\       /\n",
+    "         F     S\n",
+    "```\n",
+    "\n",
+    "Note the empty branches: `H` has both children, but `E` only has a right child (`F`), `T` only has a right child (`W`), and `W` only has a left child (`S`). Be careful \u2014 these \"gaps\" are exactly where it's easy to make a mistake.\n",
+    "\n",
+    "**3f.** Give the **inorder** traversal of Tree 2."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e2fb0e1a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer3f = \"E, F, H, K, M, T, S, W\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8863ef18",
+   "metadata": {},
+   "source": [
+    "### Tree 2\n",
+    "\n",
+    "```\n",
+    "            M\n",
+    "          /   \\\n",
+    "         H     T\n",
+    "        / \\     \\\n",
+    "       E   K     W\n",
+    "        \\       /\n",
+    "         F     S\n",
+    "```\n",
+    "\n",
+    "Note the empty branches: `H` has both children, but `E` only has a right child (`F`), `T` only has a right child (`W`), and `W` only has a left child (`S`). Be careful \u2014 these \"gaps\" are exactly where it's easy to make a mistake.\n",
+    "\n",
+    "**3g.** Give the **postorder** traversal of Tree 2."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f6ea9601",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer3g = \"F, E, K, H, S, W, T, M\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cab9df63",
+   "metadata": {},
+   "source": [
+    "### Tree 2\n",
+    "\n",
+    "```\n",
+    "            M\n",
+    "          /   \\\n",
+    "         H     T\n",
+    "        / \\     \\\n",
+    "       E   K     W\n",
+    "        \\       /\n",
+    "         F     S\n",
+    "```\n",
+    "\n",
+    "Note the empty branches: `H` has both children, but `E` only has a right child (`F`), `T` only has a right child (`W`), and `W` only has a left child (`S`). Be careful \u2014 these \"gaps\" are exactly where it's easy to make a mistake.\n",
+    "\n",
+    "**3h.** Give the **level-order** traversal of Tree 2."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "dbc16180",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer3h = \"M, H, T, E, K, W, F, S\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "edaf923a",
+   "metadata": {},
+   "source": [
+    "### Check Tree 2 answers"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6432945a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "int tree2Score = 0;\n",
+    "if (checkSequence(answer3e, \"M, H, E, F, K, T, W, S\")) tree2Score++;\n",
+    "if (checkSequence(answer3f, \"E, F, H, K, M, T, S, W\")) tree2Score++;\n",
+    "if (checkSequence(answer3g, \"F, E, K, H, S, W, T, M\")) tree2Score++;\n",
+    "if (checkSequence(answer3h, \"M, H, T, E, K, W, F, S\")) tree2Score++;\n",
+    "System.out.println();\n",
+    "System.out.println(\"Tree 2 score: \" + tree2Score + \" / 4\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b67ad6c4",
+   "metadata": {},
+   "source": [
+    "### Tree 3\n",
+    "\n",
+    "```\n",
+    "            N\n",
+    "          /   \\\n",
+    "         H     R\n",
+    "        / \\   / \\\n",
+    "       D   L P   S\n",
+    "```\n",
+    "\n",
+    "This tree happens to be structured so that its inorder traversal comes out in alphabetical order: `D, H, L, N, P, R, S`. (Go ahead and verify that by tracing it yourself below.)\n",
+    "\n",
+    "**3i.** Give the **inorder** traversal of Tree 3 (to confirm the claim above)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "675599ff",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer3i = \"D, H, L, N, P, R, S\";\n",
+    "System.out.println(\"(answer saved \\u2014 run the checker cell below for grading)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8cfb059f",
+   "metadata": {},
+   "source": [
+    "### Tree 3\n",
+    "\n",
+    "```\n",
+    "            N\n",
+    "          /   \\\n",
+    "         H     R\n",
+    "        / \\   / \\\n",
+    "       D   L P   S\n",
+    "```\n",
+    "\n",
+    "This tree happens to be structured so that its inorder traversal comes out in alphabetical order: `D, H, L, N, P, R, S`. (Go ahead and verify that by tracing it yourself below.)\n",
+    "\n",
+    "*This question is a bonus \u2014 the concept presented here is beyond the scope of DSA2 and properly covered in DSA3. Give it a try if you're curious, but it won't be expected of you in this course.*\n",
+    "\n",
+    "**3j (BONUS).** Tree 1 and Tree 2 do **not** produce alphabetically-ordered inorder traversals, even though their node labels are still just letters. What property does a tree need to have for inorder traversal to always come out in sorted order? You don't need to write code \u2014 describe it in your own words.\n",
+    "\n",
+    "*Hint: think about how each node's value compares to everything in its left branch versus everything in its right branch \u2014 and whether that has to be true just at the root, or at every node in the tree.*\n",
+    "\n",
+    "There's no auto-checker for this one \u2014 ask your tutor if you want to check your answer."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7557be4b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "String answer3j = \"For every node in the tree, all values in its left subtree must be smaller than the node's own value, and all values in its right subtree must be larger. This has to hold at every node, not just the root, since inorder traversal recurses into every subtree using the same rule.\";\n",
+    "System.out.println(\"(answer saved \\u2014 there's no auto-checker for this one, ask your tutor if you want to check your answer)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a9827ae0",
+   "metadata": {},
+   "source": [
+    "### Check Tree 3 answer (3i only \u2014 3j is a bonus with no auto-checker)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "947bf164",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "int tree3Score = 0;\n",
+    "if (checkSequence(answer3i, \"D, H, L, N, P, R, S\")) tree3Score++;\n",
+    "System.out.println();\n",
+    "System.out.println(\"Tree 3 score: \" + tree3Score + \" / 1 (3j has no auto-checker)\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "73e669cc",
+   "metadata": {},
+   "source": [
+    "**Sample answer for 3j** *(this is a model answer for instructor reference \u2014 student phrasing may vary and should be judged on the underlying idea, not exact wording):*\n",
+    "\n",
+    "> For every node in the tree, all values in its left subtree must be smaller than the node's own value, and all values in its right subtree must be larger. This has to hold at every node, not just the root, since inorder traversal recurses into every subtree using the same rule."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "61438202",
+   "metadata": {},
+   "source": [
+    "---\n",
+    "## All done!\n",
+    "\n",
+    "Run the cell below for a combined summary of your scores. Exercise 3j is a bonus question with no auto-checker and isn't included in this total \u2014 ask your tutor if you'd like feedback on it."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ee347287",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "int totalAuto = part1Score + part2Score + tree1Score + tree2Score + tree3Score;\n",
+    "int totalPossible = 17 + 3 + 4 + 4 + 1; // Part1 + Part2 + Tree1 + Tree2 + Tree3\n",
+    "System.out.println(\"=== Summary ===\");\n",
+    "System.out.println(\"Part 1 (terminology):      \" + part1Score + \" / 17\");\n",
+    "System.out.println(\"Part 2 (definitions):      \" + part2Score + \" / 3\");\n",
+    "System.out.println(\"Tree 1 (hand-trace):       \" + tree1Score + \" / 4\");\n",
+    "System.out.println(\"Tree 2 (hand-trace):       \" + tree2Score + \" / 4\");\n",
+    "System.out.println(\"Tree 3 (hand-trace):       \" + tree3Score + \" / 1\");\n",
+    "System.out.println(\"---------------------------------\");\n",
+    "System.out.println(\"Total:                     \" + totalAuto + \" / \" + totalPossible);\n",
+    "System.out.println(\"(Plus bonus Exercise 3j \\u2014 no auto-checker, ask your tutor if you want feedback)\");"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Java",
+   "language": "java",
+   "name": "java"
+  },
+  "language_info": {
+   "codemirror_mode": "java",
+   "file_extension": ".java",
+   "mimetype": "text/x-java-source",
+   "name": "Java",
+   "pygments_lexer": "java",
+   "version": "17"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
